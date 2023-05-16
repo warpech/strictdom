@@ -27,7 +27,10 @@ var properties = {
     Node: {
       appendChild: {
         type: Mutate,
-        test: function(dom, parent, args) {
+        test: function(dom, parent, args) {          
+          if (!self.strictdom.is('mutate')) {
+            self.strictdom.phase('mutate')
+          }
           var attached = isAttached(parent) || isAttached(args[0]);
           if (attached && dom.not('mutate')) throw error(3, this.name);
         }
@@ -35,7 +38,10 @@ var properties = {
 
       insertBefore: {
         type: Mutate,
-        test: function(dom, parent, args) {
+        test: function(dom, parent, args) {       
+          if (!self.strictdom.is('mutate')) {
+            self.strictdom.phase('mutate')
+          }
           var attached = isAttached(parent) || isAttached(args[0]);
           if (attached && dom.not('mutate')) throw error(3, this.name);
         }
@@ -43,7 +49,10 @@ var properties = {
 
       removeChild: {
         type: Mutate,
-        test: function(dom, parent, args) {
+        test: function(dom, parent, args) {       
+          if (!self.strictdom.is('mutate')) {
+            self.strictdom.phase('mutate')
+          }
           var attached = isAttached(parent) || isAttached(args[0]);
           if (attached && dom.not('mutate')) throw error(3, this.name);
         }
@@ -157,7 +166,10 @@ var properties = {
          * @param  {Window} win
          * @param  {Object} args
          */
-        test: function(strictdom, win, args) {
+        test: function(strictdom, win, args) {       
+          if (!self.strictdom.is('measure')) {
+            //self.strictdom.phase('measure')
+          }
           if (isAttached(args[0]) && strictdom.not('measure')) {
             throw error(2, 'getComputedStyle');
           }
@@ -464,6 +476,9 @@ Measure.prototype = extend(Property, {
    * @param  {Node} ctx
    */
   test: function(strictdom, ctx) {
+    if (!self.strictdom.is('measure')) {
+      //self.strictdom.phase('measure')
+    }
     if (isAttached(ctx || window) && strictdom.not('measure')) {
       throw error(2, this.name);
     }
@@ -530,6 +545,9 @@ Mutate.prototype = extend(Property, {
    * @param  {Node} ctx
    */
   test: function(strictdom, ctx) {
+    if (!self.strictdom.is('mutate')) {
+      self.strictdom.phase('mutate')
+    }
     if (isAttached(ctx || window) && strictdom.not('mutate')) {
       throw error(3, this.name);
     }
@@ -705,12 +723,18 @@ StrictStyle.prototype = {
   },
 
   setProperty: function(key, value) {
+    if (!self.strictdom.is('mutate')) {
+      self.strictdom.phase('mutate')
+    }
     var illegal = isAttached(this.el) && this.strictdom.not('mutate');
     if (illegal) throw error(1, 'style.' + key);
     return this._get()[key] = value;
   },
 
   removeProperty: function(key) {
+    if (!self.strictdom.is('mutate')) {
+      self.strictdom.phase('mutate')
+    }
     var illegal = isAttached(this.el) && this.strictdom.not('mutate');
     if (illegal) throw error(1, 'style.' + key);
     return this._get().removeProperty(key);
@@ -749,6 +773,9 @@ StrictStyle.prototype = {
 
   function setter(key) {
     return function(value) {
+      if (!self.strictdom.is('mutate')) {
+          self.strictdom.phase('mutate')
+        }
       var illegal = isAttached(this.el) && this.strictdom.not('mutate');
       if (illegal) throw error(1, 'style.' + key);
       return this.setProperty(key, value);
@@ -775,6 +802,9 @@ StrictClassList.prototype = {
   _get: function() { return this._getter.call(this.el); },
 
   add: function(className) {
+    if (!self.strictdom.is('mutate')) {
+      self.strictdom.phase('mutate')
+    }
     var illegal = isAttached(this.el) && this.strictdom.not('mutate');
     if (illegal) throw error(1, 'class names');
     this._get().add(className);
@@ -785,12 +815,18 @@ StrictClassList.prototype = {
   },
 
   remove: function(className) {
+    if (!self.strictdom.is('mutate')) {
+      self.strictdom.phase('mutate')
+    }
     var illegal = isAttached(this.el) && this.strictdom.not('mutate');
     if (illegal) throw error(1, 'class names');
     this._get().remove(className);
   },
 
   toggle: function() {
+    if (!self.strictdom.is('mutate')) {
+      self.strictdom.phase('mutate')
+    }
     var illegal = isAttached(this.el) && this.strictdom.not('mutate');
     if (illegal) throw error(1, 'class names');
     var classList = this._get();
