@@ -820,7 +820,11 @@ function extend(parent, props) {
 }
 
 function isAttached(el) {
-  return el === window || document.contains(el);
+  // return el === window || document.contains(el);
+  // https://github.com/wilsonpage/strictdom/pull/4
+  // return el instanceof Event || el === window || document.contains(el);
+  return !(el instanceof Event) && (el === window || document.contains(el));
+  
 }
 
 /**
