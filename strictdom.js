@@ -250,6 +250,12 @@ StrictDom.prototype = {
     if (typeof task != 'function') return;
 
     var result = task();
+
+    if (previous !== type) {
+      console.count(`strictdom phase changed ${type} ${task}`);
+      previous = type;
+    }
+
     this._phase = previous;
     return result;
   },
@@ -839,6 +845,7 @@ StrictClassList.prototype = {
  */
 
 function error(type) {
+  debugger;
   return new Error({
     1: 'Can only set ' + arguments[1] + ' during \'mutate\' phase',
     2: 'Can only get ' + arguments[1] + ' during \'measure\' phase',
